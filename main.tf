@@ -85,6 +85,21 @@ resource "libvirt_domain" "domain-ansible-master" {
     autoport    = true
   }
 
+  provisioner "file" {
+    source      = "/home/robert/.ssh/id_rsa_ansible"
+    destination = "/root/.ssh/id_rsa"
+    
+    connection {
+      type = "ssh"
+      user = "root"
+      host = "192.168.123.2"
+      port = 22
+      agent = false
+      timeout = "1m"
+      private_key = file("/home/robert/.ssh/id_rsa")
+    } 
+  }
+
   provisioner "remote-exec" {
     inline = [
       "sudo hostnamectl set-hostname ansible_master",
@@ -92,7 +107,8 @@ resource "libvirt_domain" "domain-ansible-master" {
       "sudo apt install python3 python3-pip -y",
       "sudo apt install ansible -y",
       "python3 --version",
-      "ansible --version",      
+      "ansible --version",
+      "sudo chmod 600 /root/.ssh/id_rsa"  
     ]
     connection {
       type = "ssh"
@@ -104,6 +120,7 @@ resource "libvirt_domain" "domain-ansible-master" {
       private_key = file("/home/robert/.ssh/id_rsa")
     }
   }
+
 }
 ######ANSIBLE MASTER DEFINITION END 
 
@@ -175,6 +192,6 @@ resource "libvirt_domain" "domain-ansible-slave" {
       agent = false
       timeout = "1m"
       private_key = file("/home/robert/.ssh/id_rsa")
-    }
+    } 
   }
 }
