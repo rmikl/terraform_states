@@ -45,7 +45,7 @@ resource "libvirt_cloudinit_disk" "commoninit" {
   pool           = libvirt_pool.ansible_master.name
 }
 
-# Create the machine
+## Create the machine
 resource "libvirt_domain" "domain-ansible-master" {
   name   = "ansible-master"
   memory = "512"
@@ -102,13 +102,13 @@ resource "libvirt_domain" "domain-ansible-master" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo hostnamectl set-hostname ansible_master",
+      "sudo hostnamectl set-hostname ansible-master",
       "sudo apt update",
-      "sudo apt install python3 python3-pip -y",
-      "sudo apt install ansible -y",
+      "sudo apt install python3 python3-pip git ansible -y",
       "python3 --version",
       "ansible --version",
-      "sudo chmod 600 /root/.ssh/id_rsa"  
+      "sudo chmod 600 /root/.ssh/id_rsa",
+      "sudo echo -e 'Host 192.168.123.*\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null' | sudo tee /etc/ssh/ssh_config", 
     ]
     connection {
       type = "ssh"
@@ -122,25 +122,25 @@ resource "libvirt_domain" "domain-ansible-master" {
   }
 
 }
-######ANSIBLE MASTER DEFINITION END 
+#####ANSIBLE MASTER DEFINITION END 
 
-######ANSIBLE SLAVE DEFINITION BEGIN 
+######ANSIBLE SLAVE DEFINITION BEGIN UBUNTU
 resource "libvirt_pool" "ubuntu" {
-  name = "ansble_slave"
+  name = "ansble_slave_ubuntu"
   type = "dir"
-  path = "/data/terraform/volume-pools/ansible-slave-pool"
+  path = "/data/terraform/volume-pools/ansible-slave-ubuntu-pool"
 }
 
-resource "libvirt_volume" "ansible-slave-qcow2" {
-  name   = "ansible-slave-qcow2"
+resource "libvirt_volume" "ansible-slave-ubuntu-qcow2" {
+  name   = "ansible-slave-ubuntu-qcow2"
   pool   = libvirt_pool.ubuntu.name
   source = "https://cloud-images.ubuntu.com/releases/groovy/release/ubuntu-20.10-server-cloudimg-amd64-disk-kvm.img"
   format = "qcow2"
 }
 
 # Create the machine
-resource "libvirt_domain" "domain-ansible-slave" {
-  name   = "ansible-slave"
+resource "libvirt_domain" "domain-ansible-ubuntu-slave" {
+  name   = "ansible-slave-ubuntu"
   memory = "512"
   vcpu   = 1
 
@@ -148,7 +148,7 @@ resource "libvirt_domain" "domain-ansible-slave" {
 
   network_interface {
     network_id = libvirt_network.ansible_network.id
-    hostname = "ansible-slave"
+    hostname = "ansible-slave-ubuntu"
     addresses = ["192.168.123.3"]
     wait_for_lease = true
   }
@@ -168,7 +168,7 @@ resource "libvirt_domain" "domain-ansible-slave" {
   }
 
   disk {
-    volume_id = libvirt_volume.ansible-slave-qcow2.id
+    volume_id = libvirt_volume.ansible-slave-ubuntu-qcow2.id
   }
 
   graphics {
@@ -179,7 +179,7 @@ resource "libvirt_domain" "domain-ansible-slave" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo hostnamectl set-hostname ansible_slave",
+      "sudo hostnamectl set-hostname ansible-slave-ubuntu",
       "sudo apt update",
       "sudo apt install python3 python3-pip -y",
       "python3 --version",
@@ -188,6 +188,247 @@ resource "libvirt_domain" "domain-ansible-slave" {
       type = "ssh"
       user = "robert"
       host = "192.168.123.3"
+      port = 22
+      agent = false
+      timeout = "1m"
+      private_key = file("/home/robert/.ssh/id_rsa")
+    } 
+  }
+}
+
+######ANSIBLE SLAVE DEFINITION END UBUNTU
+
+
+#####ANSIBLE SLAVE DEFINITION BEGIN CENTOS
+resource "libvirt_pool" "centos" {
+  name = "ansble_slave_centos"
+  type = "dir"
+  path = "/data/terraform/volume-pools/ansible-slave-centos-pool"
+}
+
+resource "libvirt_volume" "ansible-slave-centos-qcow2" {
+  name   = "ansible-slave-centos-qcow2"
+  pool   = libvirt_pool.centos.name
+  source = "https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-ec2-8.3.2011-20201204.2.x86_64.qcow2"
+  format = "qcow2"
+}
+
+# Create the machine
+resource "libvirt_domain" "domain-ansible-centos-slave" {
+  name   = "ansible-slave-centos"
+  memory = "512"
+  vcpu   = 1
+
+  cloudinit = libvirt_cloudinit_disk.commoninit.id
+
+  network_interface {
+    network_id = libvirt_network.ansible_network.id
+    hostname = "ansible-slave-centos"
+    addresses = ["192.168.123.4"]
+    wait_for_lease = true
+  }
+
+  # IMPORTANT: this is a known bug on cloud images, since they expect a console
+  # https://bugs.launchpad.net/cloud-images/+bug/1573095
+  console {
+    type        = "pty"
+    target_port = "0"
+    target_type = "serial"
+  }
+
+  console {
+    type        = "pty"
+    target_type = "virtio"
+    target_port = "1"
+  }
+
+  disk {
+    volume_id = libvirt_volume.ansible-slave-centos-qcow2.id
+  }
+
+  graphics {
+    type        = "spice"
+    listen_type = "address"
+    autoport    = true
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo hostnamectl set-hostname ansible-slave-centos",
+      "sudo dnf update -y",
+      "sudo dnf install python3 python3-pip -y",
+      "python3 --version",
+    ]
+    connection {
+      type = "ssh"
+      user = "robert"
+      host = "192.168.123.4"
+      port = 22
+      agent = false
+      timeout = "1m"
+      private_key = file("/home/robert/.ssh/id_rsa")
+    } 
+  }
+}
+
+######ANSIBLE SLAVE DEFINITION BEGIN DEBIAN
+resource "libvirt_pool" "debian" {
+  name = "ansble_slave_debian"
+  type = "dir"
+  path = "/data/terraform/volume-pools/ansible-slave-debian-pool"
+}
+
+resource "libvirt_volume" "ansible-slave-debian-qcow2" {
+  name   = "ansible-slave-debian-qcow2"
+  pool   = libvirt_pool.debian.name
+  source = "https://cloud.debian.org/images/cloud/OpenStack/current/debian-10-openstack-amd64.qcow2"
+  format = "qcow2"
+}
+
+# Create the machine
+resource "libvirt_domain" "domain-ansible-debian-slave" {
+  name   = "ansible-slave-debian"
+  memory = "512"
+  vcpu   = 1
+
+  cloudinit = libvirt_cloudinit_disk.commoninit.id
+
+  network_interface {
+    network_id = libvirt_network.ansible_network.id
+    hostname = "ansible-slave-debian"
+    addresses = ["192.168.123.5"]
+    wait_for_lease = true
+  }
+
+  # IMPORTANT: this is a known bug on cloud images, since they expect a console
+  # https://bugs.launchpad.net/cloud-images/+bug/1573095
+  console {
+    type        = "pty"
+    target_port = "0"
+    target_type = "serial"
+  }
+
+  console {
+    type        = "pty"
+    target_type = "virtio"
+    target_port = "1"
+  }
+
+  disk {
+    volume_id = libvirt_volume.ansible-slave-debian-qcow2.id
+  }
+
+  graphics {
+    type        = "spice"
+    listen_type = "address"
+    autoport    = true
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo hostnamectl set-hostname ansible-slave-debian",
+      "sudo apt update",
+      "sudo apt install python3 python3-pip -y",
+      "python3 --version",
+    ]
+    connection {
+      type = "ssh"
+      user = "robert"
+      host = "192.168.123.5"
+      port = 22
+      agent = false
+      timeout = "1m"
+      private_key = file("/home/robert/.ssh/id_rsa")
+    } 
+  }
+}
+
+########ANSIBLE SLAVE DEFINITION END DEBIAN
+
+######ANSIBLE SLAVE DEFINITION BEGIN RHEL
+resource "libvirt_pool" "rhel" {
+  name = "ansble_slave_rhel"
+  type = "dir"
+  path = "/data/terraform/volume-pools/ansible-slave-rhel-pool"
+}
+
+resource "libvirt_volume" "ansible-slave-rhel-qcow2" {
+  name   = "ansible-slave-rhel-qcow2"
+  pool   = libvirt_pool.rhel.name
+  source = "/data/kvm/iso/rhel-8.3-x86_64-kvm.qcow2"
+  format = "qcow2"
+}
+
+# Create the machine
+resource "libvirt_domain" "domain-ansible-rhel-slave" {
+  name   = "ansible-slave-rhel"
+  memory = "512"
+  vcpu   = 1
+
+  cloudinit = libvirt_cloudinit_disk.commoninit.id
+
+  network_interface {
+    network_id = libvirt_network.ansible_network.id
+    hostname = "ansible-slave-rhel"
+    addresses = ["192.168.123.6"]
+    wait_for_lease = true
+  }
+
+  # IMPORTANT: this is a known bug on cloud images, since they expect a console
+  # https://bugs.launchpad.net/cloud-images/+bug/1573095
+  console {
+    type        = "pty"
+    target_port = "0"
+    target_type = "serial"
+  }
+
+  console {
+    type        = "pty"
+    target_type = "virtio"
+    target_port = "1"
+  }
+
+  disk {
+    volume_id = libvirt_volume.ansible-slave-rhel-qcow2.id
+  }
+
+  graphics {
+    type        = "spice"
+    listen_type = "address"
+    autoport    = true
+  }
+
+#send file with credentials for rhel
+#file format:
+# USERNAME PASSWORD
+  provisioner "file" {
+    source      = "/home/robert/userdata"
+    destination = "/root/userdata"
+    
+    connection {
+      type = "ssh"
+      user = "root"
+      host = "192.168.123.6"
+      port = 22
+      agent = false
+      timeout = "1m"
+      private_key = file("/home/robert/.ssh/id_rsa")
+    } 
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo hostnamectl set-hostname ansible-slave-rhel",
+      "sudo subscription-manager register --username `sudo awk '{print $1}' /root/userdata` --password `sudo awk '{print $2}' /root/userdata` --auto-attach",
+      "rm -f /root/userdata",
+      "sudo dnf update -y",
+      "sudo dnf install python3 python3-pip -y",
+      "python3 --version",
+    ]
+    connection {
+      type = "ssh"
+      user = "robert"
+      host = "192.168.123.6"
       port = 22
       agent = false
       timeout = "1m"
