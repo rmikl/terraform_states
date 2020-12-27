@@ -1,4 +1,3 @@
-
 ######ANSIBLE SLAVE DEFINITION BEGIN DEBIAN
 resource "libvirt_pool" "debian" {
   name = "ansble_slave_debian"
@@ -11,12 +10,11 @@ resource "libvirt_volume" "ansible-slave-debian-qcow2" {
   pool   = libvirt_pool.debian.name
   source = "/data/kvm/iso/debian-10-openstack-amd64.qcow2"
   format = "qcow2"
-  #size = 10737418240
 }
 
 # Create the machine
 resource "libvirt_domain" "domain-ansible-debian-slave" {
-  name   = "ansible-slave-debian"
+  name   = var.hostnames["ansble_slave_debian"]
   memory = "512"
   vcpu   = 1
 
@@ -24,8 +22,8 @@ resource "libvirt_domain" "domain-ansible-debian-slave" {
 
   network_interface {
     network_id = libvirt_network.ansible_network.id
-    hostname = "ansible-slave-debian"
-    addresses = ["192.168.123.5"]
+    hostname = var.hostnames["ansble_slave_debian"]
+    addresses = [var.ips["ansble_slave_debian"]]
     wait_for_lease = true
   }
 
@@ -61,13 +59,13 @@ resource "libvirt_domain" "domain-ansible-debian-slave" {
       "python3 --version",
     ]
     connection {
-      type = "ssh"
-      user = "robert"
-      host = "192.168.123.5"
-      port = 22
-      agent = false
-      timeout = "1m"
-      private_key = file("/home/robert/.ssh/id_rsa")
+      type = var.ssh_type
+      user = var.ssh_user
+      host = var.ips["ansble_slave_debian"]
+      port = var.ssh_port
+      agent = var.ssh_agent
+      timeout = var.ssh_timeout
+      private_key = file(var.ssh_priv_key_location)
     } 
   }
 }

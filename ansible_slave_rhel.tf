@@ -14,7 +14,7 @@ resource "libvirt_volume" "ansible-slave-rhel-qcow2" {
 
 # Create the machine
 resource "libvirt_domain" "domain-ansible-rhel-slave" {
-  name   = "ansible-slave-rhel"
+  name   = var.hostnames["ansble_slave_rhel"]
   memory = "512"
   vcpu   = 1
 
@@ -22,8 +22,8 @@ resource "libvirt_domain" "domain-ansible-rhel-slave" {
 
   network_interface {
     network_id = libvirt_network.ansible_network.id
-    hostname = "ansible-slave-rhel"
-    addresses = ["192.168.123.6"]
+    hostname = var.hostnames["ansble_slave_rhel"]
+    addresses = [var.ips["ansble_slave_rhel"]]
     wait_for_lease = true
   }
 
@@ -59,13 +59,13 @@ resource "libvirt_domain" "domain-ansible-rhel-slave" {
     destination = "/root/userdata"
     
     connection {
-      type = "ssh"
-      user = "root"
-      host = "192.168.123.6"
-      port = 22
-      agent = false
-      timeout = "1m"
-      private_key = file("/home/robert/.ssh/id_rsa")
+      type = var.ssh_type
+      user = var.ssh_user
+      host = var.ips["ansble_slave_rhel"]
+      port = var.ssh_port
+      agent = var.ssh_agent
+      timeout = var.ssh_timeout
+      private_key = file(var.ssh_priv_key_location)
     } 
   }
 
@@ -79,13 +79,13 @@ resource "libvirt_domain" "domain-ansible-rhel-slave" {
       "python3 --version",
     ]
     connection {
-      type = "ssh"
-      user = "robert"
-      host = "192.168.123.6"
-      port = 22
-      agent = false
-      timeout = "1m"
-      private_key = file("/home/robert/.ssh/id_rsa")
-    } 
+      type = var.ssh_type
+      user = var.ssh_user
+      host = var.ips["ansble_slave_rhel"]
+      port = var.ssh_port
+      agent = var.ssh_agent
+      timeout = var.ssh_timeout
+      private_key = file(var.ssh_priv_key_location)
+    }  
   }
 }

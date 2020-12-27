@@ -31,7 +31,7 @@ resource "libvirt_cloudinit_disk" "commoninit" {
 
 ## Create the machine
 resource "libvirt_domain" "domain-ansible-master" {
-  name   = "ansible-master"
+  name   = var.hostnames["ansible_master"]
   memory = "512"
   vcpu   = 1
 
@@ -39,8 +39,8 @@ resource "libvirt_domain" "domain-ansible-master" {
 
   network_interface {
     network_id = libvirt_network.ansible_network.id
-    hostname = "ansible-master"
-    addresses = ["192.168.123.2"]
+    hostname = var.hostnames["ansible_master"]
+    addresses = [var.ips["ansible_master"]]
     wait_for_lease = true
   }
 
@@ -74,13 +74,13 @@ resource "libvirt_domain" "domain-ansible-master" {
     destination = "/root/.ssh/id_rsa"
     
     connection {
-      type = "ssh"
-      user = "root"
-      host = "192.168.123.2"
-      port = 22
-      agent = false
-      timeout = "1m"
-      private_key = file("/home/robert/.ssh/id_rsa")
+      type = var.ssh_type
+      user = var.ssh_user
+      host = var.ips["ansible_master"]
+      port = var.ssh_port
+      agent = var.ssh_agent
+      timeout = var.ssh_timeout
+      private_key = file(var.ssh_priv_key_location)
     } 
   }
 
@@ -97,14 +97,14 @@ resource "libvirt_domain" "domain-ansible-master" {
       "git config --global user.name 'robertmpl'"
     ]
     connection {
-      type = "ssh"
-      user = "robert"
-      host = "192.168.123.2"
-      port = 22
-      agent = false
-      timeout = "1m"
-      private_key = file("/home/robert/.ssh/id_rsa")
-    }
+      type = var.ssh_type
+      user = var.ssh_user
+      host = var.ips["ansible_master"]
+      port = var.ssh_port
+      agent = var.ssh_agent
+      timeout = var.ssh_timeout
+      private_key = file(var.ssh_priv_key_location)
+    } 
   }
 
 }

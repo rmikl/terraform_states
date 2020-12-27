@@ -14,7 +14,7 @@ resource "libvirt_volume" "ansible-slave-centos-qcow2" {
 
 # Create the machine
 resource "libvirt_domain" "domain-ansible-centos-slave" {
-  name   = "ansible-slave-centos"
+  name   = var.hostnames["ansble_slave_centos"]
   memory = "512"
   vcpu   = 1
 
@@ -22,8 +22,8 @@ resource "libvirt_domain" "domain-ansible-centos-slave" {
 
   network_interface {
     network_id = libvirt_network.ansible_network.id
-    hostname = "ansible-slave-centos"
-    addresses = ["192.168.123.4"]
+    hostname = var.hostnames["ansble_slave_centos"]
+    addresses = [var.ips["ansble_slave_centos"]]
     wait_for_lease = true
   }
 
@@ -59,13 +59,13 @@ resource "libvirt_domain" "domain-ansible-centos-slave" {
       "python3 --version",
     ]
     connection {
-      type = "ssh"
-      user = "robert"
-      host = "192.168.123.4"
-      port = 22
-      agent = false
-      timeout = "1m"
-      private_key = file("/home/robert/.ssh/id_rsa")
+      type = var.ssh_type
+      user = var.ssh_user
+      host = var.ips["ansble_slave_centos"]
+      port = var.ssh_port
+      agent = var.ssh_agent
+      timeout = var.ssh_timeout
+      private_key = file(var.ssh_priv_key_location)
     } 
   }
 }
