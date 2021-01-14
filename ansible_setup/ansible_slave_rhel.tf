@@ -15,7 +15,7 @@ resource "libvirt_volume" "ansible-slave-rhel-qcow2" {
 # Create the machine
 resource "libvirt_domain" "domain-ansible-rhel-slave" {
   name   = var.hostnames["ansble_slave_rhel"]
-  memory = "512"
+  memory = var.memory
   vcpu   = 1
 
   cloudinit = libvirt_cloudinit_disk.commoninit.id
@@ -77,6 +77,7 @@ resource "libvirt_domain" "domain-ansible-rhel-slave" {
       "sudo dnf update -y",
       "sudo dnf install python3 python3-pip -y",
       "python3 --version",
+      "timedatectl set-ntp yes"
     ]
     connection {
       type = var.ssh_type

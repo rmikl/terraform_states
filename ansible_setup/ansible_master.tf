@@ -32,7 +32,7 @@ resource "libvirt_cloudinit_disk" "commoninit" {
 ## Create the machine
 resource "libvirt_domain" "domain-ansible-master" {
   name   = var.hostnames["ansible_master"]
-  memory = "512"
+  memory = var.memory
   vcpu   = 1
 
   cloudinit = libvirt_cloudinit_disk.commoninit.id
@@ -88,13 +88,15 @@ resource "libvirt_domain" "domain-ansible-master" {
     inline = [
       "sudo hostnamectl set-hostname ansible-master",
       "sudo apt update",
-      "sudo apt install python3 python3-pip git ansible -y",
+      "sudo apt install python3 python3-pip git ansible cifs-utils -y",
       "python3 --version",
       "ansible --version",
       "sudo chmod 600 /root/.ssh/id_rsa",
       "sudo echo -e 'Host 192.168.123.*\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null' | sudo tee /etc/ssh/ssh_config",
-      "git config --global user.email 'robertm131@gmail.com'",
-      "git config --global user.name 'robertmpl'"
+      "sudo mkdir -p /samba_share",
+      "echo '//192.168.123.1/KVM /samba_share cifs guest,uid=1000,iocharset=utf8,vers=3.0 0 0' | sudo tee -a /etc/fstab",
+      "sudo mount -a",
+      "timedatectl set-ntp yes"
     ]
     connection {
       type = var.ssh_type

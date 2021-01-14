@@ -3,6 +3,12 @@ provider "libvirt" {
   uri = "qemu:///system"
 }
 
+variable memory {
+  type        = string
+  default     = "1024"
+}
+
+
 variable ssh_timeout {
   type        = string
   default     = "5m"

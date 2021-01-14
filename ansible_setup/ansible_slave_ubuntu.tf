@@ -1,29 +1,30 @@
-#####ANSIBLE SLAVE DEFINITION BEGIN CENTOS
-resource "libvirt_pool" "centos" {
-  name = "ansble_slave_centos"
+######ANSIBLE SLAVE DEFINITION BEGIN UBUNTU
+resource "libvirt_pool" "ubuntu" {
+  name = "ansble_slave_ubuntu"
   type = "dir"
-  path = "/data/terraform/volume-pools/ansible-slave-centos-pool"
+  path = "/data/terraform/volume-pools/ansible-slave-ubuntu-pool"
 }
 
-resource "libvirt_volume" "ansible-slave-centos-qcow2" {
-  name   = "ansible-slave-centos-qcow2"
-  pool   = libvirt_pool.centos.name
-  source = "/data/kvm/iso/CentOS-8-ec2-8.3.2011-20201204.2.x86_64.qcow2"
+resource "libvirt_volume" "ansible-slave-ubuntu-qcow2" {
+  name   = "ansible-slave-ubuntu-qcow2"
+  pool   = libvirt_pool.ubuntu.name
+  source = "/data/kvm/iso/ubuntu-20.10-server-cloudimg-amd64-disk-kvm.img"
   format = "qcow2"
+  #size = 10737418240
 }
 
 # Create the machine
-resource "libvirt_domain" "domain-ansible-centos-slave" {
-  name   = var.hostnames["ansble_slave_centos"]
-  memory = "512"
+resource "libvirt_domain" "domain-ansible-ubuntu-slave" {
+  name   = var.hostnames["ansble_slave_ubuntu"]
+  memory = var.memory
   vcpu   = 1
 
   cloudinit = libvirt_cloudinit_disk.commoninit.id
 
   network_interface {
     network_id = libvirt_network.ansible_network.id
-    hostname = var.hostnames["ansble_slave_centos"]
-    addresses = [var.ips["ansble_slave_centos"]]
+    hostname = var.hostnames["ansble_slave_ubuntu"]
+    addresses = [var.ips["ansble_slave_ubuntu"]]
     wait_for_lease = true
   }
 
@@ -42,7 +43,7 @@ resource "libvirt_domain" "domain-ansible-centos-slave" {
   }
 
   disk {
-    volume_id = libvirt_volume.ansible-slave-centos-qcow2.id
+    volume_id = libvirt_volume.ansible-slave-ubuntu-qcow2.id
   }
 
   graphics {
@@ -53,15 +54,16 @@ resource "libvirt_domain" "domain-ansible-centos-slave" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo hostnamectl set-hostname ansible-slave-centos",
-      "sudo dnf update -y",
-      "sudo dnf install python3 python3-pip -y",
+      "sudo hostnamectl set-hostname ansible-slave-ubuntu",
+      "sudo apt update",
+      "sudo apt install python3 python3-pip -y",
       "python3 --version",
+      "timedatectl set-ntp yes"
     ]
     connection {
       type = var.ssh_type
       user = var.ssh_user
-      host = var.ips["ansble_slave_centos"]
+      host = var.ips["ansble_slave_ubuntu"]
       port = var.ssh_port
       agent = var.ssh_agent
       timeout = var.ssh_timeout
@@ -69,3 +71,5 @@ resource "libvirt_domain" "domain-ansible-centos-slave" {
     } 
   }
 }
+
+######ANSIBLE SLAVE DEFINITION END UBUNTU

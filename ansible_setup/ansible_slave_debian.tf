@@ -15,7 +15,7 @@ resource "libvirt_volume" "ansible-slave-debian-qcow2" {
 # Create the machine
 resource "libvirt_domain" "domain-ansible-debian-slave" {
   name   = var.hostnames["ansble_slave_debian"]
-  memory = "512"
+  memory = var.memory
   vcpu   = 1
 
   cloudinit = libvirt_cloudinit_disk.commoninit.id
@@ -57,6 +57,13 @@ resource "libvirt_domain" "domain-ansible-debian-slave" {
       "sudo apt update",
       "sudo apt install python3 python3-pip -y",
       "python3 --version",
+      "sudo apt purge ntp -y",
+      "rm /lib/systemd/system/systemd-timesyncd.service.d/disable-with-time-daemon.conf",
+      "systemctl disable ntp",
+      "systemctl stop ntp",
+      "systemctl enable systemd-timesyncd.service",
+      "systemctl start systemd-timesyncd.service",
+      "timedatectl set-ntp yes"     
     ]
     connection {
       type = var.ssh_type
