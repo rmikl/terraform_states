@@ -11,7 +11,10 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, world!
+- script: |
+    sudo apt install -y terraform 
+    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    az account list
   displayName: 'Run a one-line script'
 
 - script: |
