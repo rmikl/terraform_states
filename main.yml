@@ -14,6 +14,6 @@ steps:
 - script: |
     sudo apt install -y terraform 
     curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-    az login --service-principal -u $( GITHUB_APPID ) -p $( GITHUB_PASSWORD ) --tenant $( GITHUB_TENANT )
+    az login --service-principal -u $(GITHUB_APPID) -p $(GITHUB_PASSWORD) --tenant $(GITHUB_TENANT)
     az account show | grep -i robert
   displayName: 'Prepare runner with service principal account'
