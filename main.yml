@@ -16,9 +16,10 @@ steps:
     curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
     az login --service-principal -u $(GITHUB_APPID) -p $(GITHUB_PASSWORD) --tenant $(GITHUB_TENANT)
     az account show | grep -i robert
-- script: | 
+- script: |
+    export AZURE_DEVOPS_EXT_PAT=$(tfstates_token) 
     echo test_file > test_file
-    az devops login --organization https://robertm131.visualstudio.com/ -p $(tfstates_token) 
+    az devops login --organization https://robertm131.visualstudio.com/
     az artifacts universal publish \
     --organization https://robertm131.visualstudio.com/ \
     --project="terraform_azure" \
