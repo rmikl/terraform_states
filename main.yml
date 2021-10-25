@@ -17,6 +17,7 @@ steps:
     az login --service-principal -u $(GITHUB_APPID) -p $(GITHUB_PASSWORD) --tenant $(GITHUB_TENANT)
     az account show | grep -i robert
 - script: | 
+    az devops logout
     echo test_file > test_file
     echo $(tfstates_token) | az devops login --organization https://robertm131.visualstudio.com/
     az artifacts universal publish
