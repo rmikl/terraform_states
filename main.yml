@@ -20,13 +20,13 @@ steps:
     az devops logout
     echo test_file > test_file
     echo $(tfstates_token) | az devops login --organization https://robertm131.visualstudio.com/
-    az artifacts universal publish
-    --organization https://robertm131.visualstudio.com/
-    --project="terraform_azure"
-    --scope project
-    --feed tfstates
-    --name my-first-package
-    --version 0.0.1
-    --description "Welcome to Universal Packages"
+    az artifacts universal publish \
+    --organization https://robertm131.visualstudio.com/ \
+    --project="terraform_azure" \
+    --scope project \
+    --feed tfstates \
+    --name my-first-package \
+    --version 0.0.1 \
+    --description "Welcome to Universal Packages" \
     --path test_file
   displayName: 'test uplaod'
