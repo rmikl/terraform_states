@@ -19,6 +19,7 @@ steps:
 - script: |
     export AZURE_DEVOPS_EXT_PAT=$(tfstates_token) 
     echo test_file > test_file
-    #az devops login --organization https://robertm131.visualstudio.com/
+    echo $AZURE_DEVOPS_EXT_PAT
+    az devops login --organization https://robertm131.visualstudio.com/ --verbose 
     #az artifacts universal publish --organization https://robertm131.visualstudio.com/ --project="terraform_azure" --scope project--feed tfstates --name my-first-package --version 0.0.1 --description "Welcome to Universal Packages" --path test_file
   displayName: 'test uplaod'
