@@ -19,9 +19,10 @@ steps:
     #az login --service-principal -u $(GITHUB_APPID) -p $(GITHUB_PASSWORD) --tenant $(GITHUB_TENANT)
     #az account show | grep -i robert
 - script: |
-    echo test_file > test_file
+    mkdir test_folder
+    echo test_file > test_folder/test_file
     ls -la 
     pwd
     echo "$(TFSTATES_TOKEN)" | az devops login --organization https://robertm131.visualstudio.com/ --verbose 
-    az artifacts universal publish --organization https://robertm131.visualstudio.com/ --project="terraform_azure" --scope project --feed tfstates --name my-first-package --version 0.0.1 --description "Welcome to Universal Packages" --path ./test_file
+    az artifacts universal publish --organization https://robertm131.visualstudio.com/ --project="terraform_azure" --scope project --feed tfstates --name my-first-package --version 0.0.1 --description "Welcome to Universal Packages" --path test_folder/*
   displayName: 'test uplaod'
