@@ -20,6 +20,8 @@ steps:
     az account show | grep -i robert
 - script: |
     echo test_file > test_file
+    pwd 
+    echo $(PIPELINE_WORKSPACE)
     echo "$(TFSTATES_TOKEN)" | az devops login --organization https://robertm131.visualstudio.com/ --verbose 
-    az artifacts universal publish --organization https://robertm131.visualstudio.com/ --project="terraform_azure" --scope project --feed tfstates --name my-first-package --version 0.0.1 --description "Welcome to Universal Packages" --path test_file
+    az artifacts universal publish --organization https://robertm131.visualstudio.com/ --project="terraform_azure" --scope project --feed tfstates --name my-first-package --version 0.0.1 --description "Welcome to Universal Packages" --path $(PIPELINE_WORKSPACE)/test_file
   displayName: 'test uplaod'
