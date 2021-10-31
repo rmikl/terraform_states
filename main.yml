@@ -12,12 +12,12 @@ pool:
 
 steps:
 - script: |
-    #curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-    #sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-    #sudo apt install -y terraform 
-    #curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-    #az login --service-principal -u $(GITHUB_APPID) -p $(GITHUB_PASSWORD) --tenant $(GITHUB_TENANT)
-    #az account show | grep -i robert
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+    sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+    sudo apt install -y terraform 
+    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    az login --service-principal -u $(GITHUB_APPID) -p $(GITHUB_PASSWORD) --tenant $(GITHUB_TENANT)
+    az account show | grep -i robert
 - script: |
     mkdir test_folder
     echo test_file > test_folder/test_file
