@@ -13,6 +13,7 @@ steps:
     az login --service-principal -u $(GITHUB_APPID) -p $(GITHUB_PASSWORD) --tenant $(GITHUB_TENANT)
     az account show | grep -i robert
 - script: |
+    echo $BUILD_ID
     mkdir test_folder
     echo test_file > test_folder/test_file
     ls -la 
