@@ -1,9 +1,3 @@
-#IN rmiklas
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - master
 
@@ -32,3 +26,11 @@ steps:
       --description "Welcome to Universal Packages" \
       --path test_folder/
   displayName: 'test uplaod'
+- task: DownloadPackage@1
+  inputs:
+    packageType: 'upack'
+    feed: '0e61859f-e0a8-4537-b624-60498d245a7a/04918a97-75b2-418b-acf3-f96bc78191a7'
+    view: 
+    definition: '452e76b0-7d51-4369-b021-86454d7e9bed'
+    version: '0.0.1'
+    downloadPath: '$(System.ArtifactsDirectory)'
