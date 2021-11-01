@@ -6,6 +6,7 @@ pool:
 
 steps:
 - script: |
+    sudo apt update -y
     curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
     sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
     sudo apt install -y terraform 
@@ -39,8 +40,8 @@ steps:
     export ARM_CLIENT_SECRET=$(github_password)
     export ARM_SUBSCRIPTION_ID=$(github_sub_id)
     export ARM_TENANT_ID=$(github_tenant_id)
-    terraform init
     tar xfvz terraform_states.tgz
+    terraform init
     terraform --version
     terraform plan
     ls -la

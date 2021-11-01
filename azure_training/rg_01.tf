@@ -39,19 +39,33 @@ resource "azurerm_network_interface" "tf_nic_01" {
   }
 }
 
+resource "tls_private_key" "tf_pk_01" {
+  algorithm = "RSA"
+  rsa_bits = 4096
+}
+output "tls_private_key" { 
+    value = tls_private_key.tf_pk_01.private_key_pem 
+    sensitive = true
+}
+
+variable vm_username {
+  type        = string
+  default     = "tf_user"
+}
+
 resource "azurerm_linux_virtual_machine" "tf-vm-01" {
   name                = "tf-vm-01"
   resource_group_name = azurerm_resource_group.tf_rg_01.name
   location            = azurerm_resource_group.tf_rg_01.location
   size                = "Standard_F2"
-  admin_username      = "tf_user"
+  admin_username      = var.vm_username
   network_interface_ids = [
     azurerm_network_interface.tf_nic_01.id,
   ]
 
   admin_ssh_key {
-    username   = "tf_user"
-    public_key = file("./files/id_rsa.pub")
+    username   = var.vm_username
+    public_key = tls_private_key.tf_pk_01.public_key_openssh
   }
 
   os_disk {
@@ -64,5 +78,20 @@ resource "azurerm_linux_virtual_machine" "tf-vm-01" {
     offer     = "UbuntuServer"
     sku       = "16.04-LTS"
     version   = "latest"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt update -y",
+      "echo test"
+    ]
+    connection {
+      type = "ssh"
+      user = var.vm_username
+      host = azurerm_public_ip.tf_pi_01.ip_address
+      port = "22"
+      agent = false
+      private_key = tls_private_key.tf_pk_01.private_key_pem
+    } 
   }
 }
