@@ -87,8 +87,8 @@ resource "azurerm_linux_virtual_machine" "tf-vm-01" {
     ]
     connection {
       type = "ssh"
-      user = var.tf_user
-      host = azurerm_network_interface.public_ip_address_id.value
+      user = var.vm_username
+      host = azurerm_public_ip.tf_pi_01.ip_address
       port = "22"
       agent = false
       private_key = tls_private_key.tf_pk_01.private_key_pem
