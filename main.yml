@@ -27,14 +27,11 @@ steps:
     mkdir -p /home/$USER/.ssh
     echo -e "Host $(SHARE_IP)\n\tStrictHostKeyChecking no" > /home/$USER/.ssh/config
     sudo ln -s -t /home/$USER/.ssh/ $(file_id_rsa.secureFilePath)
-    ssh $(SHARE_USER)@$(SHARE_IP) "echo test123"
-  displayName: add authorization method for ssh
+  displayName: prepare host connectivity to starage
 
 - script: |
-    echo "this is text in test file" > file
-    scp file $(SHARE_USER)@$(SHARE_IP):/home/$(SHARE_USER)/.
-    ssh $(SHARE_USER)@$(SHARE_IP) "cat /home/$(SHARE_USER)/file"
-  displayName: copy file
+    scp $(SHARE_USER)@$(SHARE_IP):/home/$(SHARE_USER)/terraform_states.tgz azure_training/.
+  displayName: copy terraform state files from storage
 
 - script: |
     cd azure_training
@@ -43,8 +40,17 @@ steps:
     export ARM_SUBSCRIPTION_ID=$(github_sub_id)
     export ARM_TENANT_ID=$(github_tenant_id)
     terraform init
+    tar xfvz terraform_states.tgz
     terraform --version
     terraform plan
-    terraform apply
     ls -la
-  displayName: terraform usage
+  displayName: test azure with terraform
+
+- script: |
+    cd azure_training
+    terraform apply -auto-approve
+    ssh $(SHARE_USER)@$(SHARE_IP) "rm /home/$(SHARE_USER)/terraform_states.tgz"
+    tar czfv terraform_states.tgz terraform.tfstate terraform.tfstate.backup .terraform.lock.hcl
+    scp terraform_states.tgz $(SHARE_USER)@$(SHARE_IP):/home/robot/.
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displaName: deploy infrastructure
