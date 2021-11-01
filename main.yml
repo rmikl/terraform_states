@@ -12,26 +12,18 @@ steps:
     curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
     az login --service-principal -u $(GITHUB_APPID) -p $(GITHUB_PASSWORD) --tenant $(GITHUB_TENANT)
     az account show | grep -i robert
-- script: |
-    echo $BUILD_ID
-    mkdir test_folder
-    echo test_file > test_folder/test_file
-    ls -la 
-    pwd
-    echo "$(TFSTATES_TOKEN)" | az devops login --organization https://robertm131.visualstudio.com/ --verbose 
-    az artifacts universal publish \
-     --organization https://robertm131.visualstudio.com/ \
-     --project="terraform_azure" --scope project --feed tfstates \
-     --name my-first-package \
-      --version 0.0.1 \
-      --description "Welcome to Universal Packages" \
-      --path test_folder/
-  displayName: 'test uplaod'
-- task: DownloadPackage@1
+  displayName: connect to azure
+
+- task: DownloadSecureFile@1
+  name: file_id_rsa
+  displayName: 'download id_rsa'
   inputs:
-    packageType: 'upack'
-    feed: '0e61859f-e0a8-4537-b624-60498d245a7a/04918a97-75b2-418b-acf3-f96bc78191a7'
-    view: 
-    definition: '452e76b0-7d51-4369-b021-86454d7e9bed'
-    version: '0.0.1'
-    downloadPath: '$(System.ArtifactsDirectory)'
+    secureFile: 'id_rsa'
+
+- script: |
+    sudo chown root:root $(file_id_rsa.secureFilePath)
+    sudo chmod a+r $(file_id_rsa.secureFilePath)
+    mkdir -p /root/.ssh
+    echo -e "Host $(SHARE_IP)\n\tStrictHostKeyChecking no"
+    sudo ln -s -t /root/.ssh/ $(file_id_rsa.secureFilePath)
+    ssh $(SHARE_USER)@(SHARE_IP) "echo test123"
