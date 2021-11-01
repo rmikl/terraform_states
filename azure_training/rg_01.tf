@@ -18,6 +18,13 @@ resource "azurerm_subnet" "tf_vn_01_sn_01" {
   address_prefixes     = ["10.100.0.0/24"]
 }
 
+resource "azurerm_public_ip" "tf_pi_01" {
+  name                = "tf_pi_01"
+  resource_group_name = azurerm_resource_group.tf_rg_01.name
+  location            = azurerm_resource_group.tf_rg_01.location
+  allocation_method   = "Static"
+}
+
 resource "azurerm_network_interface" "tf_nic_01" {
   name                = "tf_nic_01"
   location            = azurerm_resource_group.tf_rg_01.location
@@ -27,6 +34,8 @@ resource "azurerm_network_interface" "tf_nic_01" {
     name                          = "10.100.0.4"
     subnet_id                     = azurerm_subnet.tf_vn_01_sn_01.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id = azurerm_public_ip.tf_pi_01.id
+
   }
 }
 
