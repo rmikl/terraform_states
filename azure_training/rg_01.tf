@@ -30,8 +30,8 @@ resource "azurerm_network_interface" "tf_nic_01" {
   }
 }
 
-resource "azurerm_linux_virtual_machine" "tf_vm_01" {
-  name                = "tf_vm_01"
+resource "azurerm_linux_virtual_machine" "tf-vm-01" {
+  name                = "tf-vm-01"
   resource_group_name = azurerm_resource_group.tf_rg_01.name
   location            = azurerm_resource_group.tf_rg_01.location
   size                = "Standard_F2"
