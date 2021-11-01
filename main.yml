@@ -27,4 +27,4 @@ steps:
     mkdir -p /home/$USER/.ssh
     echo -e "Host $(SHARE_IP)\n\tStrictHostKeyChecking no"
     sudo ln -s -t /home/$USER/.ssh/ $(file_id_rsa.secureFilePath)
-    ssh $(SHARE_USER)@(SHARE_IP) "echo test123"
+    ssh $(SHARE_USER)@$(SHARE_IP) "echo test123"
