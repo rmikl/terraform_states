@@ -38,6 +38,10 @@ steps:
 
 - script: |
     cd azure_training
+    export ARM_CLIENT_ID=$(github_name)
+    export ARM_CLIENT_SECRET=$(github_password)
+    export ARM_SUBSCRIPTION_ID=$(github_sub_id)
+    export ARM_TENANT_ID=$(github_tenant_id)
     terraform init
     terraform --version
     terraform plan
