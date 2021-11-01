@@ -37,5 +37,7 @@ steps:
   displayName: copy file
 
 - script: |
-    ls -la
+    cd azure_training
+    terraform --version
+    terraform plan
   displayName: terraform usage
