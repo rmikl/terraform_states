@@ -38,4 +38,4 @@ steps:
 
 - script: |
     ls -la
-  displaName: terraform usage
+  displayName: terraform usage
