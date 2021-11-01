@@ -53,4 +53,4 @@ steps:
     tar czfv terraform_states.tgz terraform.tfstate terraform.tfstate.backup .terraform.lock.hcl
     scp terraform_states.tgz $(SHARE_USER)@$(SHARE_IP):/home/robot/.
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  displaName: deploy infrastructure
+  displayName: deploy infrastructure
