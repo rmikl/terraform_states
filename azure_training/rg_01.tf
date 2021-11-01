@@ -82,7 +82,7 @@ resource "azurerm_linux_virtual_machine" "tf-vm-01" {
 
   provisioner "remote-exec" {
     inline = [
-      "apt update",
+      "sudo apt update -y",
       "echo test"
     ]
     connection {
