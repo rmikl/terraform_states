@@ -1,9 +1,3 @@
-#IN rmiklas
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - master
 
@@ -12,8 +6,51 @@ pool:
 
 steps:
 - script: |
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+    sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
     sudo apt install -y terraform 
     curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
     az login --service-principal -u $(GITHUB_APPID) -p $(GITHUB_PASSWORD) --tenant $(GITHUB_TENANT)
     az account show | grep -i robert
-  displayName: 'Prepare runner with service principal account'
+  displayName: connect to azure
+
+- task: DownloadSecureFile@1
+  name: file_id_rsa
+  displayName: 'download id_rsa'
+  inputs:
+    secureFile: 'id_rsa'
+
+- script: |
+    whoami
+    sudo chown $USER:$USER $(file_id_rsa.secureFilePath)
+    sudo chmod 600 $(file_id_rsa.secureFilePath)
+    mkdir -p /home/$USER/.ssh
+    echo -e "Host $(SHARE_IP)\n\tStrictHostKeyChecking no" > /home/$USER/.ssh/config
+    sudo ln -s -t /home/$USER/.ssh/ $(file_id_rsa.secureFilePath)
+  displayName: prepare host connectivity to starage
+
+- script: |
+    scp $(SHARE_USER)@$(SHARE_IP):/home/$(SHARE_USER)/terraform_states.tgz azure_training/.
+  displayName: copy terraform state files from storage
+
+- script: |
+    cd azure_training
+    export ARM_CLIENT_ID=$(github_name)
+    export ARM_CLIENT_SECRET=$(github_password)
+    export ARM_SUBSCRIPTION_ID=$(github_sub_id)
+    export ARM_TENANT_ID=$(github_tenant_id)
+    terraform init
+    tar xfvz terraform_states.tgz
+    terraform --version
+    terraform plan
+    ls -la
+  displayName: test azure with terraform
+
+- script: |
+    cd azure_training
+    terraform apply -auto-approve
+    ssh $(SHARE_USER)@$(SHARE_IP) "rm /home/$(SHARE_USER)/terraform_states.tgz"
+    tar czfv terraform_states.tgz terraform.tfstate terraform.tfstate.backup .terraform.lock.hcl
+    scp terraform_states.tgz $(SHARE_USER)@$(SHARE_IP):/home/robot/.
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: deploy infrastructure
