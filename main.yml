@@ -38,6 +38,7 @@ steps:
 
 - script: |
     cd azure_training
+    terraform init
     terraform --version
     terraform plan
   displayName: terraform usage
