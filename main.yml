@@ -28,3 +28,11 @@ steps:
     echo -e "Host $(SHARE_IP)\n\tStrictHostKeyChecking no" > /home/$USER/.ssh/config
     sudo ln -s -t /home/$USER/.ssh/ $(file_id_rsa.secureFilePath)
     ssh $(SHARE_USER)@$(SHARE_IP) "echo test123"
+  displayName: add authorization method for ssh
+
+- script: |
+    echo "this is text in test file" > file
+    scp file $(SHARE_USER)@$(SHARE_IP):/home/$(SHARE_USER)/.
+    ssh $(SHARE_USER)@$(SHARE_IP) "cat /home/$(SHARE_USER)/file"
+  displayName: copy file
+
