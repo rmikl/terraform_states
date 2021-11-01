@@ -45,5 +45,6 @@ steps:
     terraform init
     terraform --version
     terraform plan
+    terraform apply
     ls -la
   displayName: terraform usage
