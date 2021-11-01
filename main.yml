@@ -41,7 +41,6 @@ steps:
     export ARM_SUBSCRIPTION_ID=$(github_sub_id)
     export ARM_TENANT_ID=$(github_tenant_id)
     terraform init
-    terraform state replace-provider -auto-approve registry.terraform.io/-/tls_private_key registry.terraform.io/hashicorp/tls_private_key
     tar xfvz terraform_states.tgz
     terraform --version
     terraform plan
