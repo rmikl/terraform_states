@@ -56,5 +56,5 @@ steps:
     ssh $(SHARE_USER)@$(SHARE_IP) "rm /home/$(SHARE_USER)/terraform_states.tgz"
     tar czfv terraform_states.tgz terraform.tfstate terraform.tfstate.backup .terraform.lock.hcl
     scp terraform_states.tgz $(SHARE_USER)@$(SHARE_IP):/home/robot/.
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: deploy infrastructure
