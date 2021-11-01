@@ -25,6 +25,6 @@ steps:
     sudo chown $USER:$USER $(file_id_rsa.secureFilePath)
     sudo chmod a+r $(file_id_rsa.secureFilePath)
     mkdir -p /home/$USER/.ssh
-    echo -e "Host $(SHARE_IP)\n\tStrictHostKeyChecking no"
+    echo -e "Host $(SHARE_IP)\n\tStrictHostKeyChecking no" > /home/$USER/.ssh/config
     sudo ln -s -t /home/$USER/.ssh/ $(file_id_rsa.secureFilePath)
     ssh $(SHARE_USER)@$(SHARE_IP) "echo test123"
