@@ -36,3 +36,6 @@ steps:
     ssh $(SHARE_USER)@$(SHARE_IP) "cat /home/$(SHARE_USER)/file"
   displayName: copy file
 
+- script: |
+    ls -la
+  displaName: terraform usage
