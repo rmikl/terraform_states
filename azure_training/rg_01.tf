@@ -35,13 +35,13 @@ resource "azurerm_linux_virtual_machine" "tf-vm-01" {
   resource_group_name = azurerm_resource_group.tf_rg_01.name
   location            = azurerm_resource_group.tf_rg_01.location
   size                = "Standard_F2"
-  admin_username      = "root"
+  admin_username      = "tf_user"
   network_interface_ids = [
     azurerm_network_interface.tf_nic_01.id,
   ]
 
   admin_ssh_key {
-    username   = "root"
+    username   = "tf_user"
     public_key = file("./files/id_rsa.pub")
   }
 
