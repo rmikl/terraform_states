@@ -22,9 +22,9 @@ steps:
 
 - script: |
     whoami
-    sudo chown root:root $(file_id_rsa.secureFilePath)
+    sudo chown $USER:$USER $(file_id_rsa.secureFilePath)
     sudo chmod a+r $(file_id_rsa.secureFilePath)
-    mkdir -p /root/.ssh
+    mkdir -p /home/$USER/.ssh
     echo -e "Host $(SHARE_IP)\n\tStrictHostKeyChecking no"
-    sudo ln -s -t /root/.ssh/ $(file_id_rsa.secureFilePath)
+    sudo ln -s -t /home/$USER/.ssh/ $(file_id_rsa.secureFilePath)
     ssh $(SHARE_USER)@(SHARE_IP) "echo test123"
