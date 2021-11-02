@@ -1,7 +1,7 @@
 #this is a resource group and all objects for jump host
 resource "azurerm_resource_group" "tf_rg_02" {
   name     = "tf_rg_02"
-  location = "northeurope"
+  location = "westeurope"
 }
 
 resource "azurerm_virtual_network" "tf_vn_02" {
