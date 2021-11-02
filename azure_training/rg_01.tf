@@ -39,20 +39,6 @@ resource "azurerm_network_interface" "tf_nic_01" {
   }
 }
 
-resource "tls_private_key" "tf_pk_01" {
-  algorithm = "RSA"
-  rsa_bits = 4096
-}
-output "tls_private_key" { 
-    value = tls_private_key.tf_pk_01.private_key_pem 
-    sensitive = true
-}
-
-variable vm_username {
-  type        = string
-  default     = "tf_user"
-}
-
 resource "azurerm_linux_virtual_machine" "tf-vm-01" {
   name                = "tf-vm-01"
   resource_group_name = azurerm_resource_group.tf_rg_01.name
@@ -93,9 +79,22 @@ provisioner "file" {
     } 
   }
 
+provisioner "file" {
+    content      = "${tls_private_key.tf_pk_01.private_key_pem}"
+    destination = "/home/${var.vm_username}/.ssh/id_rsa"
+    connection {
+      type = "ssh"
+      user = var.vm_username
+      host = azurerm_public_ip.tf_pi_01.ip_address
+      port = "22"
+      agent = false
+      private_key = tls_private_key.tf_pk_01.private_key_pem
+    } 
+  }
+
   provisioner "remote-exec" {
     inline = [
-      "cat /home/${var.vm_username}/.ssh/id_rsa_${var.vm_username}.pub >> /home/${var.vm_username}/.ssh/authorized_keys"
+      "cat /home/${var.vm_username}/.ssh/id_rsa_${var.vm_username}.pub >> /home/${var.vm_username}/.ssh/authorized_keys",
     ]
     connection {
       type = "ssh"
