@@ -76,14 +76,26 @@ resource "azurerm_linux_virtual_machine" "tf-vm-01" {
   source_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
+    sku       = "20.04-LTS"
     version   = "latest"
+  }
+
+provisioner "file" {
+    source      = "files/id_rsa.pub"
+    destination = "/home/${var.vm_username}/.ssh/id_rsa_${var.vm_username}.pub"
+    connection {
+      type = "ssh"
+      user = var.vm_username
+      host = azurerm_public_ip.tf_pi_01.ip_address
+      port = "22"
+      agent = false
+      private_key = tls_private_key.tf_pk_01.private_key_pem
+    } 
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo apt update -y",
-      "echo test"
+      "cat /home/${var.vm_username}/.ssh/id_rsa_${var.vm_username}.pub >> /home/${var.vm_username}/.ssh/authorized_keys"
     ]
     connection {
       type = "ssh"
