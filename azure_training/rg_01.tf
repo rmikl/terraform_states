@@ -95,6 +95,7 @@ provisioner "file" {
   provisioner "remote-exec" {
     inline = [
       "cat /home/${var.vm_username}/.ssh/id_rsa_${var.vm_username}.pub >> /home/${var.vm_username}/.ssh/authorized_keys",
+      "chmod 600 /home/${var.vm_username}/.ssh/id_rsa"
     ]
     connection {
       type = "ssh"
