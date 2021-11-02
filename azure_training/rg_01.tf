@@ -76,7 +76,7 @@ resource "azurerm_linux_virtual_machine" "tf-vm-01" {
   source_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = "20.04"
+    sku       = "18.04-LTS"
     version   = "latest"
   }
 
