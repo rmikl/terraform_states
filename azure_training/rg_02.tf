@@ -69,7 +69,7 @@ resource "azurerm_linux_virtual_machine" "tf-vm-02" {
     inline = [
       "sudo apt update",
       "sudo apt install apache2 -y",
-      "hostname > /var/www/html/index.html"
+      "hostname | sudo tee /var/www/html/index.html"
     ]
     connection {
       type = "ssh"
