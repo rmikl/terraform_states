@@ -43,7 +43,7 @@ resource "azurerm_linux_virtual_machine" "tf-vm-01" {
   name                = "tf-vm-01"
   resource_group_name = azurerm_resource_group.tf_rg_01.name
   location            = azurerm_resource_group.tf_rg_01.location
-  size                = "Standard_F2"
+  size                = "Standard_B1s"
   admin_username      = var.vm_username
   network_interface_ids = [
     azurerm_network_interface.tf_nic_01.id,
