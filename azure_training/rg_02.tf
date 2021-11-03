@@ -65,11 +65,13 @@ resource "azurerm_linux_virtual_machine" "tf-vm-02" {
     sku       = "18.04-LTS"
     version   = "latest"
   }
+
   provisioner "remote-exec" {
     inline = [
       "sudo apt update",
       "sudo apt install apache2 -y",
-      "hostname | sudo tee /var/www/html/index.html"
+      "hostname | sudo tee /var/www/html/index.html",
+      "sudo systemctl status apache2.service"
     ]
     connection {
       type = "ssh"
@@ -78,6 +80,6 @@ resource "azurerm_linux_virtual_machine" "tf-vm-02" {
       port = "22"
       agent = false
       private_key = tls_private_key.tf_pk_01.private_key_pem
-    } 
+    }
   }
 }
