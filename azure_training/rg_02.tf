@@ -69,8 +69,8 @@ resource "azurerm_linux_virtual_machine" "tf-vm-02" {
   provisioner "remote-exec" {
     inline = [
       "sudo apt update",
-      "sudo apt-get install -f --reinstall apache2",
-      "apt-get remove --purge -s apache2",
+      "sudo apt-get install -f --reinstall apache2 -y",
+      "apt-get remove --purge -s apache2 -y",
       "sudo apt install apache2 -y",
       "hostname | sudo tee /var/www/html/index.html",
       "sudo systemctl status apache2.service"
