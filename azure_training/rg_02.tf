@@ -65,4 +65,19 @@ resource "azurerm_linux_virtual_machine" "tf-vm-02" {
     sku       = "18.04-LTS"
     version   = "latest"
   }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt update",
+      "sudo apt install apache2 -y",
+      "hostname > /var/www/html/index.html"
+    ]
+    connection {
+      type = "ssh"
+      user = var.vm_username
+      host = azurerm_public_ip.tf_pi_01.ip_address
+      port = "22"
+      agent = false
+      private_key = tls_private_key.tf_pk_01.private_key_pem
+    } 
+  }
 }
