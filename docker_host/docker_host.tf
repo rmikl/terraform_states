@@ -2,7 +2,7 @@
 resource "libvirt_pool" "docker_host" {
   name = "ansble_master"
   type = "dir"
-  path = "/data/terraform/volume-pools/docker-host-pool"
+  path = "/home/robert/docker-host-pool"
 }
 
 
@@ -34,6 +34,7 @@ resource "libvirt_domain" "domain-docker-host" {
   name   = var.hostnames["docker_host"]
   memory = var.memory
   vcpu   = 1
+  #auto_read_only = false
 
   cloudinit = libvirt_cloudinit_disk.commoninit.id
 
@@ -96,8 +97,7 @@ resource "libvirt_domain" "domain-docker-host" {
       "sudo mkdir -p /samba_share",
       "echo '//192.168.123.1/KVM /samba_share cifs guest,uid=1000,iocharset=utf8,vers=3.0 0 0' | sudo tee -a /etc/fstab",
       "sudo mount -a",
-      "timedatectl set-ntp yes",
-      "cd /samba_share/ansible_playbooks/ && ansible-playbook -i inventory.yml playbook.yml"
+      "timedatectl set-ntp yes"
     ]
     connection {
       type = var.ssh_type

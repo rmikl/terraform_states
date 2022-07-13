@@ -1,7 +1,19 @@
 # instance the provider
-provider "libvirt" {
-  uri = "qemu:///system"
+terraform {
+ required_version = ">= 0.13"
+  required_providers {
+    libvirt = {
+      source  = "dmacvicar/libvirt"
+      version = "0.6.9"
+    }
+  }
 }
+
+provider "libvirt" {
+  uri = "qemu:///session"
+}
+
+
 
 variable memory {
   type        = string
