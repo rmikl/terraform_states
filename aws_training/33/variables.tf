@@ -37,3 +37,13 @@ data "aws_ami" "latest_ubuntu" {
     values = ["x86_64"]
   }
 }
+
+variable "env_types" {
+  type = list(string)
+  default = ["prod","qa","test"]
+}
+
+variable "instance_name" {
+  type = string
+  default = "ubuntu"
+}
