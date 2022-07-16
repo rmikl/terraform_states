@@ -6,6 +6,15 @@ resource "aws_key_pair" "ssh_key" {
   }
 }
 
+resource "aws_key_pair" "ssh_key_linux" {
+  key_name   = "ssh_key_linux"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC6Za6287De2wuLhhy1flwqx52in9ulkHAt20PdiLUrGZJB4sTYd2QLfT7lkCQ7wT7M0TUV1NGZAHLUwO1NGMYj2Abdt6QlZTQZj2nj1ZCKDuKZduc6kMWDs/Dmani0kXnc2E8qKZ2JlV2E4xgLVYwAfd67DOCKpc2omnnj13I27DTwbmm482CoDOlafZL7f2Xmi0/29KokgSbxJ5qn6pitn7jY3BlHd2dr2lHZUE31zuNxgqEJNMU/ZzaTK2CfHYSnbVY1rB/t1EmKnNw9H7+Jl6s6yDsO9E4jQTA1snmrhG0bsqopArXj/7aL3Gs9rUXYEfSxF4Y455wUJlGg3+YJqENb9QiEEXG+ikw8KmRHafhS8blMSDEALiJY9fYb9dWEBHzlWRbMims+o4DNYla6zsGnlULqXexNEjUF2mFFurQ/x9IPQ1tGde+DnstQUAr2ZtjoDRnJjo5S5sGlcabc6tXHKS7fgxt0vr/K0nGH2etzqXAJu2QSOLJymWR2GuU= robert@robert-MacBookAir"
+  tags = {
+    name = "ssh_key_linux"
+  }
+}
+
+
 resource "aws_security_group" "allow_ssh" {
   name        = "allow_ssh"
   description = "Allow ssh inbound traffic"
