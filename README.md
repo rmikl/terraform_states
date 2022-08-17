@@ -1,3 +1,10 @@
-# terraform_states
-This repository contains terraform states for varied terraform providers. 
-CI for azure deployment is in the main.yml file.
+# rmikl sample Terraform projects
+* This repository contains terraform states for azure, aws, libvirt terraform providers. 
+
+## folder structure: 
+### providers
+### |_azure 
+###       |_ different projects...  
+### |_aws
+### |_libvirt
+
