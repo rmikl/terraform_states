@@ -5,7 +5,5 @@ resource "aws_iam_user" "loop_users"{
         non-root = "true"
         terraform = "true"
     }
-    name = var.users(count.index)
+    name = var.users[count.index]
 }
-
-
