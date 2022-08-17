@@ -1,4 +1,4 @@
-# iam-3 sample sceanario taht will cover creation of 2 ec2 instances 
+# ec2-3 sample sceanario taht will cover creation of 2 ec2 instances 
 
 there will be open ssh connectivity from jump to prod intance, and also connectivity from outside to jump
 instances: 
