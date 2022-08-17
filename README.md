@@ -2,9 +2,9 @@
 * This repository contains terraform states for azure, aws, libvirt terraform providers. 
 
 ## folder structure: 
-### providers
-### |_azure 
-#####       |_ different projects...  
-### |_aws
-### |_libvirt
+ providers
+ |_azure 
+      |_ different projects...  
+ |_aws
+ |_libvirt
 
