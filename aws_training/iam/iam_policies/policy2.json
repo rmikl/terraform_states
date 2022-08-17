@@ -1,0 +1,47 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeFastLaunchImages",
+                "ec2:DeleteTags",
+                "ec2:CreateTags"
+            ],
+            "Resource": [
+                "arn:aws:ec2:*:821685025880:key-pair/*",
+                "arn:aws:ec2:*:821685025880:elastic-gpu/*",
+                "arn:aws:ec2:*:821685025880:elastic-ip/*",
+                "arn:aws:ec2:*::image/*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:GetDefaultCreditSpecification",
+                "ec2:DescribeTags",
+                "ec2:GetCoipPoolUsage",
+                "ec2:DescribeVpnConnections",
+                "ec2:GetEbsEncryptionByDefault",
+                "ec2:DescribeVolumesModifications",
+                "ec2:GetHostReservationPurchasePreview",
+                "ec2:GetNetworkInsightsAccessScopeAnalysisFindings",
+                "ec2:DescribeFastSnapshotRestores",
+                "ec2:GetNetworkInsightsAccessScopeContent",
+                "ec2:GetSubnetCidrReservations",
+                "ec2:GetReservedInstancesExchangeQuote",
+                "ec2:GetInstanceTypesFromInstanceRequirements",
+                "ec2:DescribeScheduledInstances",
+                "ec2:GetSerialConsoleAccessStatus",
+                "ec2:GetAssociatedIpv6PoolCidrs",
+                "ec2:DescribeScheduledInstanceAvailability",
+                "ec2:GetSpotPlacementScores",
+                "ec2:GetEbsDefaultKmsKeyId",
+                "ec2:DescribeElasticGpus"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
