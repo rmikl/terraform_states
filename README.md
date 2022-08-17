@@ -4,7 +4,7 @@
 ## folder structure: 
 ### providers
 ### |_azure 
-###       |_ different projects...  
+#####       |_ different projects...  
 ### |_aws
-### |_libvirt
+##### |_libvirt
 
