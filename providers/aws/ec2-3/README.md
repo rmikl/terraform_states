@@ -5,4 +5,7 @@ instances:
 * jump
 * prod
 
-from prod there will be possbility to use aws cli, with usage of IAM roles, role should be list ec2 instance
+from prod there will be possbility to use aws cli, with usage of IAM roles, role should be list ec2 instance,
+
+
+in this scenario i will use modules
