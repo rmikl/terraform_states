@@ -3,8 +3,7 @@ resource "aws_placement_group" "redundant" {
   strategy = "spread"
 }
 
-
 resource "aws_placement_group" "speed" {
-  name     = "redundant"
+  name     = "speed"
   strategy = "cluster"
 }

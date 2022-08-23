@@ -1,17 +1,21 @@
-resource "aws_vpc" "vpc_speed" {
+data "aws_kms_key" "key_enabling_hibernation" {
+  key_id = "2dc2d93a-3a5d-4d01-a28a-3e0c65873728"
 }
 
-resource "aws_subnet" "subnet_speed" {
-  vpc_id     = aws_vpc.vpc_speed.id
+#resource "aws_ebs_encryption_by_default" "default_key" {
+#  enabled = true
+#}
+
+resource "aws_ebs_volume" "ebs_for_hibernate" {
+  availability_zone = var.zone
+  size              = 8
+  encrypted         = true
+  type              = "gp2"
+  kms_key_id        = data.aws_kms_key.key_enabling_hibernation.arn
 }
 
-resource "aws_network_interface" "eni_speed_instance" {
-  subnet_id   = aws_subnet.subnet_speed.id
+resource "aws_volume_attachment" "ebs_att" {
+  device_name = "/dev/sdh"
+  volume_id   = aws_ebs_volume.ebs_for_hibernate.id
+  instance_id = aws_instance.speed.id
 }
-
-resource "aws_eip" "one" {
-  vpc                       = true
-  network_interface         = aws_network_interface.eni_speed_instance.id
-}
-
-
