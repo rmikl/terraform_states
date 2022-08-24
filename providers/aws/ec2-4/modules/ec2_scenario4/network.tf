@@ -15,25 +15,11 @@ resource "aws_security_group" "traffic_to_infra" {
   }
 }
 
-resource "aws_vpc" "internal_lab" {
-    cidr_block = "10.0.0.0/24"
+resource "aws_eip" "for_speed_instance" {
+    instance = aws_instance.speed.id
 }
 
-resource "aws_subnet" "internal_lab_subnet" {
-  vpc_id     = aws_vpc.internal_lab.id
-  cidr_block = "10.0.0.128/25"
-  availability_zone = var.zone
-}
-
-resource "aws_network_interface" "for_speed_instance" {
-    subnet_id       = aws_subnet.internal_lab_subnet.id
-    security_groups = [ aws_security_group.traffic_to_infra.id ]
-}
-
-resource "aws_eip" "redundant_elastic"{
-    network_interface = aws_network_interface.for_speed_instance.id
-}
-
-resource "aws_internet_gateway" "gw" {
-  vpc_id = aws_vpc.internal_lab.id
+resource "aws_key_pair" "pub_key_jump" {
+  key_name   = "pub_key_jump"
+  public_key = "<YOUR_PUB_KEY>"
 }

@@ -1,5 +1,5 @@
 data "aws_kms_key" "key_enabling_hibernation" {
-  key_id = "2dc2d93a-3a5d-4d01-a28a-3e0c65873728"
+  key_id = "<YOUR_KMS_KEY_ID>"
 }
 
 #resource "aws_ebs_encryption_by_default" "default_key" {
