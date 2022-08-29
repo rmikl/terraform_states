@@ -5,7 +5,7 @@ instances:
 * speed_instance
 
 Scenario:
-speed_instance will have ENI with elastic IP, when speed instance would be hibernated, then ENI could be manually moved (NOT THE BEST PRACTICE) to redundant_instance that is using high availability placement group, speed instance will be hibernated, so it needs to have configured proper ebs. 
+speed_instance will have elastic IP attached, when speed instance would be hibernated, then ENI could be manually moved (NOT THE BEST PRACTICE) to redundant_instance that is using high availability placement group, speed instance will be hibernated, so it needs to have configured proper ebs. 
 
 We will also use modules. 
 
