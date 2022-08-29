@@ -1,6 +1,6 @@
 # ebs-1 scenario that will cover createion of ebs volueme and copying it to different avaiability zone 
 
-## there will be 2 modules:
+## there will be 3 modules:
 * creation_of_ebs 
     * in this module there will be ec2 instance with ebs volume in the availability zone stored in varaible var.sorce_az
 * copying_of_ebs_to_different_az 
