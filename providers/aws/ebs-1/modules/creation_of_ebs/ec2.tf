@@ -9,6 +9,6 @@ resource "aws_instance" "base" {
     terraform_instance = "true"
     name = "base"
   }
-  availability_zone = var.zone
+  availability_zone = var.source_az
   vpc_security_group_ids = [ aws_security_group.traffic_to_infra.id ]
 }

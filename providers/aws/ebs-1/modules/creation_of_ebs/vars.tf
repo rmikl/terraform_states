@@ -1,4 +1,4 @@
-variable zone {
+variable source_az {
   type        = string
   default     = "eu-central-1a"
   description = "storage region"
