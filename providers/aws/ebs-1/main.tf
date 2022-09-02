@@ -21,4 +21,5 @@ module "copying_of_ebs_to_different_az"{
   source_ebs_volume_id = module.creation_of_ebs.source_ebs_volume_id
   key_pair_id = module.creation_of_ebs.pub_key_id
   source_instance_id = module.creation_of_ebs.source_instance_id
+  depends_on = [ module.creation_of_ebs ]
 }

@@ -4,6 +4,7 @@ resource "aws_instance" "target" {
   key_name = var.key_pair_id
   vpc_security_group_ids = [ var.sg_traffic_to_infra_id ]
   availability_zone = var.dest_az
+  depends_on = [ data.aws_instance.source_instance ]
 }
 
 data "aws_instance" "source_instance"{
