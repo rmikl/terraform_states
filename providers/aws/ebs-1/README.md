@@ -6,4 +6,6 @@
 * copying_of_ebs_to_different_az 
     * in this module there will be ec2 instance in defferent AZ (variable stored in var.dest_az), we will creare snaphost of ebs from first module (not encrypted) and based on that new volume in different AZ will be created (encrypted) and pinned to another ec2 instance
 * creation_of_multi_attach_volume
-    * in this module there will be multi attach volume created based on snapshot from previous module, based on that the volume will be created and attach to 3 ec2 instanced that also will be created in this module
+    * in this module there will be multi attach volume created based on snapshot from previous module, based on that the volume will be created and attach to 2 ec2 instanced that also will be created in this module
+    (due to issue with tf provider
+     https://github.com/hashicorp/terraform-provider-aws/issues/22326 there is not posibility to implement 3rd solution, it has been implemented correctly)
