@@ -3,7 +3,6 @@ resource "aws_ebs_snapshot" "snapshot_from_volume" {
   depends_on = [ aws_instance.target ] 
 }
 
-
 data "aws_kms_alias" "kms_key"{
   name = "alias/aws/ebs"
 }
