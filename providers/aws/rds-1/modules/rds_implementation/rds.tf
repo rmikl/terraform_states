@@ -15,8 +15,7 @@ resource "aws_db_instance" "master" {
   vpc_security_group_ids = [aws_security_group.trafic_in.id]
   availability_zone = "eu-central-1a"
   backup_retention_period = 5
-
-
+  publicly_accessible    = true
 }
 
 resource "aws_db_instance" "rreplica" {
@@ -31,7 +30,7 @@ resource "aws_db_instance" "rreplica" {
   username               = var.db_username
   password               = var.db_password
   availability_zone      = "eu-central-1b"
-
+  publicly_accessible    = true
 }
 
 resource "aws_security_group" "trafic_in" {
