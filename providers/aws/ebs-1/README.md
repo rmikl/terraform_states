@@ -1,4 +1,4 @@
-# ebs-1 scenario that will cover createion of ebs volueme and copying it to different avaiability zone
+# ebs-1 scenario that will cover creation of ebs volueme and copying it to different avaiability zone
 
 ## there will be 3 modules:
 * creation_of_ebs 
