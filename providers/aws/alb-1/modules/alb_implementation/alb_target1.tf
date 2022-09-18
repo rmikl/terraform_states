@@ -6,6 +6,7 @@ resource "aws_lb_listener" "test_listener1" {
     target_group_arn = aws_lb_target_group.group1.arn
     type             = "forward"
   }
+  
 }
 
 resource "aws_lb_listener_rule" "test_listner_rule_1" {

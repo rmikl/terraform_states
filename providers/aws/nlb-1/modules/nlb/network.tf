@@ -50,11 +50,3 @@ data "aws_vpc" "default_vpc" {
 data "aws_subnet_ids" "default_vpc_subnets_ids" {
   vpc_id = data.aws_vpc.default_vpc.id
 }
-
-resource "aws_lb" "app_lb" {
-  name               = "app-lb"
-  load_balancer_type = "application"
-  subnets            = data.aws_subnet_ids.default_vpc_subnets_ids.ids
-  enable_cross_zone_load_balancing = true
-  security_groups = [aws_security_group.traffic_lb.id]
-}

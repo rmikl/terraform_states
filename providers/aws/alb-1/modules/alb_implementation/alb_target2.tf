@@ -9,7 +9,7 @@ resource "aws_lb_listener_rule" "test_listner_rule_2" {
 
   condition {
     path_pattern {
-      values = ["/index.html"]
+      values = ["/"]
     }
   }
 }
