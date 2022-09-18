@@ -22,7 +22,7 @@ resource "aws_rds_cluster_instance" "master" {
   cluster_identifier = aws_rds_cluster.master.id
   instance_class     = "db.t3.micro"
   engine             = "aurora-mysql"
-  engine_version     = "8.0"
+  engine_version     = "5.7"
   publicly_accessible =  true
 }
 
