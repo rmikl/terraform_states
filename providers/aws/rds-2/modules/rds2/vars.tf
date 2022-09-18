@@ -11,9 +11,18 @@ variable "vpc_id" {
     default = "vpc-0efe235925cc8fce0"
 }
 
-variable zone {
+variable zone1 {
   type        = string
   default     = "eu-central-1a"
+}
+
+variable zone2 {
+  type        = string
+  default     = "eu-central-1b"
+}
+variable zone3 {
+  type        = string
+  default     = "eu-central-1c"
 }
 
 variable "ec2_ami" {
@@ -25,12 +34,4 @@ variable "ec2_ami" {
 variable "aws_instance" {
     type = string
     default = "t2.micro"
-}
-
-variable "rds_creds" {
-  default = {
-    username = var.db_username
-    password = var.db_password
-  }
-  type = map(string)
 }

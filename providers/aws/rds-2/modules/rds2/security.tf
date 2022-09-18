@@ -54,12 +54,12 @@ egress {
 }
 
 resource "aws_secretsmanager_secret" "rds_creds" {
-  name = "rds_creds"
+  name = "rds_creds1"
 }
 
 resource "aws_secretsmanager_secret_version" "rds_creds" {
   secret_id     = aws_secretsmanager_secret.rds_creds.id
-  secret_string = jsonencode(var.rds_creds)
+  secret_string = jsonencode({"password": "${var.db_password}","username":"${var.db_username}"})
 }
 
 resource "aws_iam_role" "access_to_db_creds" {
