@@ -1,12 +1,93 @@
-create secret so that db proxy will be able to use it to read write from db 
+resource "aws_security_group" "traffic_ec2" {
+  name        = "traffic_to_infra"
+  description = "allow neede traffic for ec2"
 
-create ima role that will give proxy possiblity to this secret 
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
+  ingress {
+    description      = "ssh from VPC"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
 
-create terget group with dbs
+  egress {
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
 
-iam authenication enabled in proxy configuration
+    egress {
+    from_port        = 3306
+    to_port          = 3306
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
 
-security groups that will allow from the outside to proxy and form proxy to db 
+resource "aws_security_group" "traffic_mysql" {
+  vpc_id      = "${data.aws_vpc.default_vpc.id}"
+  name        = "trafic_in"
+  description = "Allow all inbound for mysql"
+ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+egress {
+    from_port        = 3306
+    to_port          = 3306
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
 
-create proxy 
+resource "aws_secretsmanager_secret" "rds_creds" {
+  name = "rds_creds"
+}
+
+resource "aws_secretsmanager_secret_version" "rds_creds" {
+  secret_id     = aws_secretsmanager_secret.rds_creds.id
+  secret_string = jsonencode(var.rds_creds)
+}
+
+resource "aws_iam_role" "access_to_db_creds" {
+  name = "iam_role_for_infra"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetRandomPassword",
+                "secretsmanager:CreateSecret",
+                "secretsmanager:ListSecrets"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": "secretsmanager:GetSecretValue",
+            "Resource": [
+                     "${aws_secretsmanager_secret.rds_creds.arn}"
+            ]
+        }
+    ]
+}
+EOF
+}
