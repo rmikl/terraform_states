@@ -21,26 +21,27 @@ resource "aws_db_proxy" "write_to_master" {
     auth_scheme = "SECRETS"
     description = "example"
     iam_auth    = "DISABLED"
-    secret_arn  = aws_secretsmanager_secret.rds_creds.arn
+    secret_arn  = data.aws_secretsmanager_secret.rds_creds.arn
   }
   depends_on = [
-    aws_rds_cluster_instance.master
+    aws_db_instance.master
   ]
 }
 
 resource "aws_db_proxy_default_target_group" "def_rds" {
   db_proxy_name = aws_db_proxy.write_to_master.name
   depends_on = [
-    aws_rds_cluster_instance.master
+    aws_db_instance.master
   ]
 }
 
 resource "aws_db_proxy_target" "master" {
-  db_cluster_identifier = aws_rds_cluster.master.id
+  db_instance_identifier = aws_db_instance.master.id
   db_proxy_name          = aws_db_proxy.write_to_master.name
   target_group_name      = aws_db_proxy_default_target_group.def_rds.name
+
   depends_on = [
-    aws_rds_cluster_instance.master
+    aws_db_instance.master
   ]
 }
 
